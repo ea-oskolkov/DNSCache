@@ -1,7 +1,6 @@
 #include "Test.h"
 
 #include <thread>
-#include <atomic>
 #include <iostream>
 #include <limits>
 
@@ -42,7 +41,7 @@ namespace Test {
         std::cout << "Start multithreading test (~" << timeSecMultithreading << " sec)" << std::endl;
         std::cout << "Data consistency check during concurrent read/write" << std::endl;
         std::vector<std::thread> thVector;
-        std::atomic<bool> run = true;
+        bool run = true;
 
         // Write threads
         for (int i = 0; i < std::thread::hardware_concurrency(); ++i) {
