@@ -105,7 +105,7 @@ public:
 
         // The update makes the record the youngest
         if (!insertedMapItem.second) {
-            auto tmpIterator = insertedMapItem.first->second->listIterator;
+            const auto& tmpIterator = insertedMapItem.first->second->listIterator;
             list.splice(list.end(), list, insertedMapItem.first->second->listIterator);
 
             // Update
