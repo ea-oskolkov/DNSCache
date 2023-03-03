@@ -11,7 +11,7 @@ void DNSCache::update(const DomainName_t& name, const DNSRecord_t & dnsRecord) {
     if (name.empty() || dnsRecord.empty())
         return;
 
-    std::unique_lock<std::shared_mutex> lock(mutex);
+    std::lock_guard<std::shared_mutex> lock(mutex);
     cMap.add(name, dnsRecord); // Skip returns value
 }
 
