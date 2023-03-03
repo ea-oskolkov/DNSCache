@@ -2,7 +2,10 @@
 
 #include <thread>
 #include <iostream>
-#include <limits>
+#include <vector>
+#include <stdexcept>
+#include <algorithm>
+#include <stdlib.h>
 
 namespace Test {
     struct TestCaseItem {
@@ -43,8 +46,12 @@ namespace Test {
         std::vector<std::thread> thVector;
         bool run = true;
 
+        unsigned int maxThread = std::thread::hardware_concurrency();
+        if (!maxThread)
+            maxThread = 1;
+
         // Write threads
-        for (int i = 0; i < std::thread::hardware_concurrency(); ++i) {
+        for (unsigned int i = 0; i < maxThread; ++i) {
             thVector.emplace_back([&] {
                 try {
                     while (run) {
@@ -67,7 +74,7 @@ namespace Test {
         while (dnsCache.getSize() != capacityDNSCache);
 
         // Read threads
-        for (int i = 0; i < std::thread::hardware_concurrency(); ++i) {
+        for (unsigned int i = 0; i < maxThread; ++i) {
             thVector.emplace_back([&] {
                 try {
                     while (run) {
@@ -76,6 +83,7 @@ namespace Test {
                             const auto &actual = dnsCache.resolve(item.name);
                             const auto &expected = item.record;
                             checkEqualDNSRecord(expected, actual);
+
                             // Sleep 1ms
                             std::this_thread::sleep_for(std::chrono::milliseconds(1));
                         }
@@ -129,7 +137,6 @@ namespace Test {
                 const auto &actual = dnsCache.resolve(testCaseArr[4].name);
                 checkEqualDNSRecord(expected, actual);
                 checkEqualUint(dnsCache.getSize(), capacityDNSCache);
-
                 std::cout << "Success" << std::endl << std::endl;
             }
 

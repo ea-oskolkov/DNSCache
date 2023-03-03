@@ -4,9 +4,9 @@
 
 int main() {
 
-    std::cout << "Testing DNS cache with " << DNSCacheCapacity << " items" << std::endl;
+    std::cout << "Testing DNS cache with " << Test::capacityDNSCache << " items" << std::endl;
 
-    auto& dnsCache= DNSCache::getInstance();
+    auto& dnsCache= DNSCache::getInstance(Test::capacityDNSCache);
 
     Test::oneThreadTest(dnsCache);
 

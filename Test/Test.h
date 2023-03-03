@@ -5,7 +5,7 @@
 
 namespace Test
 {
-    static inline constexpr std::size_t capacityDNSCache = DNSCacheCapacity;
+    static inline constexpr std::size_t capacityDNSCache = 4;
     static inline constexpr std::size_t timeSecMultithreading = 15;
 
     void multiThreadTest(DNSCache& dnsCache);

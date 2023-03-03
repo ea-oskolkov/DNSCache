@@ -3,24 +3,20 @@
 
 #include <string>
 #include "CMap.h"
-#include "LockGuard/WLockGuard.h"
-#include "LockGuard/RLockGuard.h"
+#include <shared_mutex>
 #include <mutex>
 
 using DomainName_t = std::string;
 using DNSRecord_t = std::string;
 
-static inline constexpr std::size_t DNSCacheCapacity = 4;
 
 class DNSCache {
 
 private:
-    DNSCache() = default;
-    CMap<DomainName_t, DNSRecord_t> cMap{DNSCacheCapacity};
+    DNSCache(std::size_t capacity);
+    CMap<DomainName_t, DNSRecord_t> cMap;
 
-    mutable pthread_rwlock_t rwlock;
-
-    void releaseRWLock();
+    mutable std::shared_mutex mutex;
 
 public:
     DNSCache(DNSCache&&) = delete;
@@ -28,7 +24,7 @@ public:
     DNSCache& operator=(const DNSCache&) = delete;
     DNSCache& operator=(DNSCache&&) = delete;
 
-    static DNSCache& getInstance();
+    static DNSCache& getInstance(std::size_t capacity = 0);
 
     /**
      * Adds or updates a DNS cache entry.
@@ -66,7 +62,7 @@ public:
      * */
     void clear();
 
-    virtual ~DNSCache();
+    virtual ~DNSCache() = default;
 
 };
 

@@ -8,12 +8,6 @@
 #include <list>
 #include <stdexcept>
 
-enum class CMapAddStatus{
-    ADD,
-    UPDATE,
-    REPLACE_OLD
-};
-
 /**
  * Custom map.
  *
@@ -39,10 +33,10 @@ class CMap final {
 
 private:
     struct PairValue;
-    using PairValuePtr = std::shared_ptr<PairValue>;
 
-    std::unordered_map<K, PairValuePtr> map;
-    using MapIterator = typename std::unordered_map<K, PairValuePtr>::iterator;
+    using Map = std::unordered_map<K, std::shared_ptr<PairValue>>;
+    Map map;
+    using MapIterator = typename Map::iterator;
 
     std::list<MapIterator> list;
     using ListIterator = typename std::list<MapIterator>::iterator;
@@ -64,6 +58,12 @@ private:
     }
 
 public:
+
+    enum class CMapAddStatus{
+        ADDED,
+        UPDATED,
+        REPLACED_OLD
+    };
 
     /**
      * Allocates memory for a given number of elements.
@@ -95,7 +95,7 @@ public:
      * @return CMapAddStatus. if add, then the element was added. If oldestItemRemove, then the element has been updated.
      */
     CMapAddStatus add(const K& key, const V& value) {
-        CMapAddStatus ret = CMapAddStatus::ADD;
+        CMapAddStatus ret = CMapAddStatus::ADDED;
 
         // Try to add new item
         auto newPairValue = std::make_shared<PairValue>();
@@ -105,16 +105,20 @@ public:
 
         // The update makes the record the youngest
         if (!insertedMapItem.second) {
-            list.erase(insertedMapItem.first->second->listIterator);
+            auto tmpIterator = insertedMapItem.first->second->listIterator;
+            list.splice(list.end(), list, insertedMapItem.first->second->listIterator);
+
             // Update
             insertedMapItem.first->second = newPairValue;
-            ret = CMapAddStatus::UPDATE;
+            newPairValue->listIterator = tmpIterator;
+            ret = CMapAddStatus::UPDATED;
+            return ret;
         }
 
         // If the array is full
         if (map.size() > capacity) {
             oldestItemRemove();
-            ret = CMapAddStatus::REPLACE_OLD;
+            ret = CMapAddStatus::REPLACED_OLD;
         }
 
         // Add iterator to list
