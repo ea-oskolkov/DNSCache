@@ -1,6 +1,6 @@
 # Overview
 
-A class that implements a thread-safe DNS cache for execution in a Linux environment.
+A class that implements a thread-safe DNS cache.
 
 # Build
 
