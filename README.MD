@@ -6,9 +6,9 @@ A class that implements a thread-safe DNS cache.
 
 In the source code directory run:
 
-cmake -S .
+* ```cmake -S .```
 
-cmake --build .
+* ```cmake --build .```
 
 # Complexity
 

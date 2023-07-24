@@ -1,18 +1,25 @@
-#include <iostream>
-#include "DNSCache.h"
 #include "./Test/Test.h"
+#include "DNSCache.h"
 
-int main() {
+#include <iostream>
 
-    std::cout << "Testing DNS cache with " << Test::capacityDNSCache << " items" << std::endl;
+int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
 
-    auto& dnsCache= DNSCache::getInstance(Test::capacityDNSCache);
+	try {
+		std::cout << "Testing DNS cache with " << Test::capacityDNSCache << " items" << std::endl;
 
-    Test::oneThreadTest(dnsCache);
+		auto &dnsCache = DNSCache::getInstance(Test::capacityDNSCache);
 
-    dnsCache.clear();
+		Test::oneThreadTest(&dnsCache);
 
-    Test::multiThreadTest(dnsCache);
+		dnsCache.clear();
 
-    return 0;
+		Test::multiThreadTest(&dnsCache);
+	}
+	catch (const std::exception &ex) {
+		std::cerr << "Test failed" << std::endl;
+		return EXIT_FAILURE;
+	}
+
+	return EXIT_SUCCESS;
 }

@@ -5,10 +5,11 @@ project(DNSCache)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(${PROJECT_NAME}
+add_executable(DNSCache
         main.cpp
         CMap.h
         DNSCache.cpp
         DNSCache.h
         Test/Test.cpp
-        Test/Test.h)
+        Test/Test.h
+)
